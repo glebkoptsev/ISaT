@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections;
 
 namespace ISaT1
 {
@@ -22,7 +19,7 @@ namespace ISaT1
             Console.WriteLine("Для обновления машины нажмите 4");
             Console.WriteLine("Для отображения всех машин нажмите 5");
             Console.WriteLine("Для выхода нажмите любую другую цифру");
-            if(!int.TryParse(Console.ReadLine(), out int key))
+            if (!int.TryParse(Console.ReadLine(), out int key))
             {
                 Console.WriteLine();
                 Console.WriteLine("Можно вводить только цифры!");
@@ -49,7 +46,7 @@ namespace ISaT1
                     Console.WriteLine();
                     goto Menu;
                 case 2:
-                    var car = new Car();                   
+                    var car = new Car();
                     Console.WriteLine("Введите марку машины");
                     car.mark = Console.ReadLine();
                     Console.WriteLine("Введите модель машины");
@@ -90,12 +87,17 @@ namespace ISaT1
                         goto Menu;
                     }
                     Console.WriteLine("Машина найдена");
-                    cars.Remove(carForUpdate);
                     var carNew = new Car();
                     Console.WriteLine("Введите марку машины");
                     carNew.mark = Console.ReadLine();
                     Console.WriteLine("Введите модель машины");
                     carNew.model = Console.ReadLine();
+                    if (cars.Where(c => c.mark == carNew.mark && c.model == carNew.model).Any())
+                    {
+                        Console.WriteLine("Такая машина уже существует");
+                        goto Menu;
+                    }
+                    cars.Remove(carForUpdate);
                     cars.Add(carNew);
                     Console.WriteLine("Машина обновлена");
                     goto Menu;
