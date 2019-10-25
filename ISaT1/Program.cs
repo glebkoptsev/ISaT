@@ -12,6 +12,7 @@ namespace ISaT1
         static List<Car> cars = new List<Car>();
         static void Main(string[] args)
         {
+            cars.Add(new Car { mark = "Skoda", model = "Octavia" });
         Menu:
             Console.WriteLine();
             Console.WriteLine("Для поиска марки машины нажмите 0");
@@ -19,8 +20,14 @@ namespace ISaT1
             Console.WriteLine("Для добавления машины нажмите 2");
             Console.WriteLine("Для удаления машины нажмите 3");
             Console.WriteLine("Для обновления машины нажмите 4");
-            Console.WriteLine("Для выхода нажмите 5");          
-            int key = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Для отображения всех машин нажмите 5");
+            Console.WriteLine("Для выхода нажмите любую другую цифру");
+            if(!int.TryParse(Console.ReadLine(), out int key))
+            {
+                Console.WriteLine();
+                Console.WriteLine("Можно вводить только цифры!");
+                goto Menu;
+            }
             switch (key)
             {
                 case 0:
@@ -47,6 +54,11 @@ namespace ISaT1
                     car.mark = Console.ReadLine();
                     Console.WriteLine("Введите модель машины");
                     car.model = Console.ReadLine();
+                    if (cars.Where(c => c.mark == car.mark && c.model == car.model).Any())
+                    {
+                        Console.WriteLine("Такая машина уже существует");
+                        goto Menu;
+                    }
                     cars.Add(car);
                     Console.WriteLine("Машина добавлена");
                     goto Menu;
@@ -56,8 +68,14 @@ namespace ISaT1
                     carDel.mark = Console.ReadLine();
                     Console.WriteLine("Введите модель машины");
                     carDel.model = Console.ReadLine();
-                    cars.Remove(carDel);
-                    Console.WriteLine("Машина удалена");
+                    var carForDelete = cars.SingleOrDefault(c => c.mark == carDel.mark && c.model == carDel.model);
+                    if (carForDelete != null)
+                    {
+                        cars.Remove(carForDelete);
+                        Console.WriteLine("Машина удалена");
+                        goto Menu;
+                    }
+                    Console.WriteLine("Машина отсутствует");
                     goto Menu;
                 case 4:
                     var carOld = new Car();
@@ -65,14 +83,14 @@ namespace ISaT1
                     carOld.mark = Console.ReadLine();
                     Console.WriteLine("Введите модель машины");
                     carOld.model = Console.ReadLine();
-                    var carsOld = cars.Where(c => c.model == carOld.model && c.mark == carOld.mark);
-                    if (!carsOld.Any())
+                    var carForUpdate = cars.SingleOrDefault(c => c.model == carOld.model && c.mark == carOld.mark);
+                    if (carForUpdate == null)
                     {
                         Console.WriteLine("Машина не найдена");
                         goto Menu;
                     }
                     Console.WriteLine("Машина найдена");
-                    cars.Remove(carOld);
+                    cars.Remove(carForUpdate);
                     var carNew = new Car();
                     Console.WriteLine("Введите марку машины");
                     carNew.mark = Console.ReadLine();
@@ -80,6 +98,11 @@ namespace ISaT1
                     carNew.model = Console.ReadLine();
                     cars.Add(carNew);
                     Console.WriteLine("Машина обновлена");
+                    goto Menu;
+                case 5:
+                    Console.WriteLine();
+                    cars.ForEach(c => Console.WriteLine($"{c.mark} {c.model}"));
+                    if (cars.Count == 0) Console.WriteLine("База пуста");
                     goto Menu;
             }
         }
